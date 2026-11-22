@@ -51,7 +51,7 @@ def preprocessing() -> ColumnTransformer:
 # TODO 1: choose at least three candidates and justify them in MODEL_SELECTION.md.
 # Change the settings, not just the names: a different model family or a clearly different setting each time.
 CANDIDATES = {
-    "logreg": LogisticRegression(max_iter=1000),
+    "logreg": LogisticRegression(max_iter=1000, class_weight="balanced"),
     "random_forest": RandomForestClassifier(n_estimators=200, max_depth=8, random_state=42),
     "gradient_boosting": GradientBoostingClassifier(random_state=42),
 }
@@ -111,7 +111,7 @@ def main() -> None:
 
             # the model, with its signature (inputs and outputs) and an example row
             signature = infer_signature(X_te, proba)
-            info = mlflow.sklearn.log_model(model, name="model", signature=signature, input_example=X_te.head(3))
+            info = mlflow.sklearn.log_model(model, name="model", signature=signature, input_example=X_te.head(3) , skops_trusted_types=["sklearn.tree._tree.Tree"])
             mlflow.set_tag("model_uri", info.model_uri)
 
             print(f"{name:18s} run {run.info.run_id[:8]}  auc {metrics['auc']:.3f}  f1 {metrics['f1']:.3f}  "
